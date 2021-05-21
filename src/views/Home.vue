@@ -1,18 +1,19 @@
 <template>
   <div class="home">
-    <img alt="Vue logo" src="../assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <h1>This is an home page</h1>
+    <h1>isMobile: {{ $isMobile }}</h1>
   </div>
 </template>
 
 <script>
-// @ is an alias to /src
-import HelloWorld from '@/components/HelloWorld.vue'
-
+import { titleMixin } from '@/helps/mixin';
 export default {
-  name: 'Home',
-  components: {
-    HelloWorld
-  }
-}
+  name: "Home",
+  title: 'Home',
+  mixins: [titleMixin],
+  components: {},
+  mounted() {
+    console.log(this.$route);
+  },
+};
 </script>
