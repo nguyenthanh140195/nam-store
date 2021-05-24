@@ -1,19 +1,24 @@
 <template>
   <div class="home">
     <h1>This is an home page</h1>
-    <h1>isMobile: {{ $isMobile }}</h1>
+    <Table />
   </div>
 </template>
 
 <script>
-import { titleMixin } from '@/helps/mixin';
+import { toRefs, ref, reactive, computed } from "vue";
+import Table from "../components/TestTable";
+import { titleMixin } from "@/helps/mixin";
 export default {
   name: "Home",
-  title: 'Home',
+  title: "Home",
   mixins: [titleMixin],
-  components: {},
+  components: { Table },
+  setup() {
+    return {};
+  },
   mounted() {
-    console.log(this.$route);
+    // console.log("[Home] mounted", this.$route);
   },
 };
 </script>
