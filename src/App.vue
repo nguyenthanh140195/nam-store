@@ -1,5 +1,5 @@
 <template>
-  <router-view class="app__wrapper" />
+  <router-view class="app__wrapper" :class="{ isMobile: $isMobile }" />
 
   <div v-if="$loading.count.value" class="app__loading">
     <Loading />

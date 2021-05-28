@@ -1,17 +1,17 @@
 import { createStore } from 'vuex'
+import userModules from './user'
+import shareModules from './share'
 import localStoragePlugin from './plugins'
 
+
 export default createStore({
-  state: {
-    user: {
-      name: ''
-    }
-  },
-  mutations: {
-  },
-  actions: {
-  },
+  state: {},
+  getters: {},
+  actions: {},
+  mutations: {},
   modules: {
+    user: userModules,
+    share: shareModules,
   },
   plugins: [localStoragePlugin],
 })

@@ -10,19 +10,18 @@
 </template>
 
 <script>
+import { useStore } from "vuex";
 import { useRoute } from "vue-router";
 import Footer from "./Footer";
-const checkPermission = (pageRoles = [], userRole) => {
-  return pageRoles.includes(userRole);
-};
 export default {
   name: "Layout",
   components: { Footer },
   setup(props) {
+    const store = useStore();
     const route = useRoute();
 
     const { noAuth, roles: pageRoles } = route.meta;
-    const permission = checkPermission(pageRoles, "ADMIN");
+    const permission = store.getters.checkPermission(pageRoles);
     const canAccess = noAuth || permission;
 
     return { canAccess };

@@ -11,3 +11,11 @@ export function getToken() {
 export function removeToken() {
     return localStorage.removeItem(LOCAL_STORAGE_TOKEN_KEY);
 }
+
+export const checkPermission = (pageRoles = [], userRole = '') => {
+    return pageRoles.includes(userRole);
+};
+
+export const isLoggedIn = () => {
+    return !!getToken();
+}

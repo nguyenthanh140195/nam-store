@@ -10,8 +10,8 @@
 
 <script>
 import { toRefs, ref, reactive, computed } from "vue";
-import Table from "../components/TestTable";
-import Input from "../components/TestInput";
+import Table from "@/components/TestTable";
+import Input from "@/components/TestInput";
 import { titleMixin } from "@/helps/mixin";
 export default {
   name: "Home",
@@ -22,7 +22,7 @@ export default {
     return {};
   },
   mounted() {
-    // console.log("[Home] mounted", this.$route);
+    console.log("[Home] mounted", this.$route);
   },
 };
 </script>

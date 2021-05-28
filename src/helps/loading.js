@@ -1,5 +1,5 @@
 import { inject } from 'vue';
-import { ref } from "@vue/reactivity";
+import { ref } from '@vue/reactivity';
 
 export const loadingSymbol = Symbol("loading");
 

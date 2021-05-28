@@ -18,9 +18,9 @@ export default {
   setup() {
     return {};
   },
-  // created() {
-  //   console.log("[About] mounted", this);
-  // },
+  created() {
+    console.log("[About] mounted", this);
+  },
 };
 </script>
 

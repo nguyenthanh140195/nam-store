@@ -5,6 +5,9 @@
 <script>
 export default {
   name: "Profile",
+  created() {
+    console.log("[Profile] mounted", this);
+  },
 };
 </script>
 

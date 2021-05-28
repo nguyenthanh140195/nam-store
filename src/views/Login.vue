@@ -5,6 +5,9 @@
 <script>
 export default {
   name: "Login",
+  created() {
+    console.log("[Login] mounted", this);
+  },
 };
 </script>
 

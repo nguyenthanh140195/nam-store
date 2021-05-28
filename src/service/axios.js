@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { getToken } from '../helps/auth'
+import { getToken } from '@/helps/auth'
 
 const { CancelToken } = axios;
 let instance = null;
