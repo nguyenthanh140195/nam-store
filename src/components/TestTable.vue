@@ -1,46 +1,45 @@
 <template>
   <div class="test-table">
-    sortOrders: {{ table.sortOrders }}
+    sorted: {{ table.sorted }}
     <br />
     filtered: {{ table.filtered }}
     <CTable
       hover
       striped
       class="custom-table1"
-      :page="table.page"
-      :size="table.size"
+      v-model:page="table.page"
+      v-model:size="table.size"
+      v-model:sorted="table.sorted"
+      v-model:filtered="table.filtered"
       :columns="table.columns"
-      :filtered="table.filtered"
       :totalData="table.totalData"
       :dataSource="table.dataSource"
-      :sortOrders="table.sortOrders"
       @isFinished="isFinished"
-      @onSortChanged="onSortChanged"
-      @onSizeChanged="onSizeChanged"
-      @onPageChanged="onPageChanged"
-      @onFilterChanged="onFilterChanged"
     />
     <br />
     <br />
     <CTable
-      v-slot="{ row }"
-      :columns="columns"
+      v-slot="{ row, index, page, size }"
       :page="table.page"
       :size="table.size"
+      :sorted="table.sorted"
+      @update:page="updatePage"
+      @update:size="updateSize"
+      @update:sorted="updateSorted"
+      :columns="columns"
       :totalData="table.totalData"
       :dataSource="table.dataSource"
-      :sortOrders="table.sortOrders"
       class="custom-table2"
-      @onSortChanged="onSortChanged"
-      @onSizeChanged="onSizeChanged"
-      @onPageChanged="onPageChanged"
     >
       <td
         v-for="column in columns"
         :key="column.key"
         class="custom-table2__row__cel"
       >
-        <div :class="column.celClass">
+        <div v-if="column.key === 'no'" class="align-center">
+          {{ (page - 1) * size + index + 1 }}
+        </div>
+        <div v-else :class="column.celClass">
           {{ row[column.key] }}
         </div>
       </td>
@@ -50,7 +49,7 @@
 
 <script>
 import { toRefs, ref, reactive, computed, onMounted } from "vue";
-import CTable from "./CTable";
+import CTable from "./Base/CTable";
 const _columns = [
   {
     key: "no",
@@ -135,44 +134,47 @@ export default {
     const table = reactive({
       page: 1,
       size: 10,
-      totalData: 1,
+      sorted: {},
       filtered: {},
-      sortOrders: {},
+      totalData: 0,
       columns: [],
       dataSource: [],
     });
+
     const isFinished = (elements) => {
       // console.log("[TEST] isFinished", elements);
     };
-    const onSortChanged = (sort) => {
-      table.sortOrders = sort;
-      // console.log("[TEST] onSortChanged", sort);
-    };
-    const onSizeChanged = (size) => {
-      table.size = size;
-      // console.log("[TEST] onSizeChanged", size);
-    };
-    const onPageChanged = (page) => {
+    const updatePage = (page) => {
       table.page = page;
-      // console.log("[TEST] onPageChanged", page);
+      // console.log("[TEST] updatePage", page);
     };
-    const onFilterChanged = (filter) => {
+    const updateSize = (size) => {
+      table.size = size;
+      // console.log("[TEST] updateSize", size);
+    };
+    const updateSorted = (sort) => {
+      table.sorted = sort;
+      // console.log("[TEST] updateSorted", sort);
+    };
+    const updateFiltered = (filter) => {
       table.filtered = filter;
-      // console.log("[TEST] onFilterChanged", filter);
+      // console.log("[TEST] updateFiltered", filter);
     };
+
     onMounted(() => {
       table.totalData = 101;
       table.columns = _columns;
       table.dataSource = _dataSource;
     });
+
     return {
       table,
       columns,
       isFinished,
-      onSortChanged,
-      onSizeChanged,
-      onPageChanged,
-      onFilterChanged,
+      updateSorted,
+      updateSize,
+      updatePage,
+      updateFiltered,
     };
   },
   mounted() {
@@ -188,6 +190,9 @@ export default {
       padding: 5px;
       text-align: left;
       background: #f8f8f8;
+      .align-center {
+        text-align: center;
+      }
     }
   }
 }

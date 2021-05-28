@@ -6,6 +6,7 @@ import store from './store'
 // import i18n from './i18n'
 // import mixin from './helps/mixin'
 import plugins from './helps/plugins'
+import loading from './helps/loading'
 
 let app = createApp(App)
 
@@ -15,5 +16,6 @@ app.use(router)
 // app.use(i18n)
 // app.mixin(mixin)
 app.use(plugins)
+app.use(loading)
 
 app.mount('#app')

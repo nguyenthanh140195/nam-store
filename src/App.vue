@@ -1,33 +1,53 @@
 <template>
-  <div id="nav">
-    <router-link to="/home">Home</router-link> |
-    <router-link to="/about">About</router-link>
+  <router-view class="app__wrapper" />
+
+  <div v-if="$loading.count.value" class="app__loading">
+    <Loading />
   </div>
-  <router-view />
 </template>
 
-<style>
+<script>
+import Loading from "./components/Loading";
+export default {
+  name: "App",
+  components: { Loading },
+};
+</script>
+
+<style lang="scss">
+@import "./material.scss";
+
 * {
   box-sizing: border-box;
 }
+
+body {
+  margin: 0;
+}
+
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-align: center;
+}
+
+.app__wrapper {
+  width: 100vw;
+  height: 100vh;
   color: #2c3e50;
+  overflow: hidden;
 }
 
-#nav {
-  padding: 30px;
-}
-
-#nav a {
-  font-weight: bold;
-  color: #2c3e50;
-}
-
-#nav a.router-link-exact-active {
-  color: #42b983;
+.app__loading {
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  position: fixed;
+  overflow: hidden;
+  background: #00000080;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 </style>

@@ -1,7 +1,7 @@
 <template>
   <div class="c-pagination">
     <div class="c-pagination__col left">
-      <!-- <span>{{ paginationInfo.pageText }}</span> -->
+      <!-- <span class="page__des">{{ paginationInfo.pageText }}</span> -->
       <select :value="page" @change="setPage($event.target.value)">
         <option v-for="n in totalPage" :key="n" :value="n">
           {{ n }}
@@ -9,7 +9,7 @@
       </select>
     </div>
     <div class="c-pagination__col mid">
-      <span>{{ paginationInfo.sizeText }}</span>
+      <span class="page__des">{{ paginationInfo.sizeText }}</span>
       <select :value="size" @change="setSize($event.target.value)">
         <option v-for="op in sizeOptions" :key="op" :value="op">
           {{ op || "ALL" }}
@@ -44,7 +44,7 @@
 import { toRefs, ref, reactive, computed } from "vue";
 export default {
   name: "CPagination",
-  emits: ["onPageChanged", "onSizeChanged"],
+  emits: ["update:page", "update:size"],
   props: {
     page: {
       required: true,
@@ -89,14 +89,16 @@ export default {
       }
       return pages;
     });
+
     const setPage = (page) => {
-      emit("onPageChanged", +page);
-      // console.log("[CPagination] onPageChanged", +page);
+      emit("update:page", +page);
+      // console.log("[CPagination] updatePage", +page);
     };
-    const setSize = (page) => {
-      emit("onSizeChanged", +page);
-      // console.log("[CPagination] onSizeChanged", +page);
+    const setSize = (size) => {
+      emit("update:size", +size);
+      // console.log("[CPagination] updateSize", +size);
     };
+
     return { pagination, pageShow, setPage, setSize };
   },
 };
@@ -105,30 +107,56 @@ export default {
 <style lang="scss" scope>
 .c-pagination {
   display: flex;
-  padding-top: 10px;
+  flex-wrap: wrap;
+  margin-top: 10px;
   &__col {
     display: flex;
-    flex-basis: 33.33%;
+    margin-bottom: 5px;
     &.left {
+      width: 25%;
       justify-content: flex-start;
     }
     &.mid {
+      width: 25%;
       justify-content: center;
     }
     &.right {
+      width: 50%;
       justify-content: flex-end;
-      .page__link {
-        cursor: pointer;
-        padding: 3px 6px;
-        margin-left: 5px;
-        &:disabled {
-          cursor: not-allowed;
-        }
+    }
+    .page__des {
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      margin-right: 6px;
+    }
+    .page__link {
+      cursor: pointer;
+      padding: 3px 6px;
+      margin-left: 5px;
+      &:disabled {
+        cursor: not-allowed;
       }
     }
     select {
-      min-width: 50px;
-      padding: 3px 6px;
+      padding: 3px 0;
+    }
+  }
+}
+
+@media only screen and (max-width: 480px) {
+  .c-pagination {
+    &__col {
+      &.left {
+        width: 50%;
+      }
+      &.mid {
+        width: 50%;
+        justify-content: flex-end;
+      }
+      &.right {
+        width: 100%;
+      }
     }
   }
 }

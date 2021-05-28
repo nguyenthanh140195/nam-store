@@ -2,6 +2,8 @@
   <div class="about">
     <h1>This is an about page</h1>
     <h3>isMobile: {{ $isMobile }}</h3>
+    <span class="material-icons  md-18">computer</span>
+    <span class="material-icons  md-48">smartphone</span>
   </div>
 </template>
 
@@ -16,9 +18,9 @@ export default {
   setup() {
     return {};
   },
-  created() {
-    console.log(this);
-  },
+  // created() {
+  //   console.log("[About] mounted", this);
+  // },
 };
 </script>
 

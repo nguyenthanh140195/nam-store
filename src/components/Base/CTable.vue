@@ -29,8 +29,7 @@
                 type="text"
                 class="search"
                 :value="filtered[column.key]"
-                @blur="setFilter(column.key, $event)"
-                @keyup.enter="setFilter(column.key, $event)"
+                @change="setFilter(column.key, $event)"
               />
             </div>
           </th>
@@ -49,7 +48,7 @@
           :key="index"
           class="c-table__row"
         >
-          <slot :row="row" :index="index">
+          <slot :row="row" :index="index" v-bind="table">
             <td
               v-for="column in columns"
               :key="column.key"
@@ -83,13 +82,13 @@
     </table>
     <CPagination
       v-if="pagination"
-      :size="table.size"
       :page="table.page"
+      :size="table.size"
+      @update:page="setPage"
+      @update:size="setSize"
       :totalPage="totalPage"
       :sizeOptions="sizeOptions"
       :paginationInfo="tableInfo.paginationInfo"
-      @onPageChanged="setPage"
-      @onSizeChanged="setSize"
     />
   </div>
 </template>
@@ -102,10 +101,10 @@ export default {
   name: "CTable",
   emits: [
     "isFinished",
-    "onSortChanged",
-    "onSizeChanged",
-    "onPageChanged",
-    "onFilterChanged",
+    "update:page",
+    "update:size",
+    "update:sorted",
+    "update:filtered",
   ],
   components: { CPagination },
   props: {
@@ -131,19 +130,11 @@ export default {
     totalData: {
       required: true,
       type: Number,
-      default: 1,
+      default: 0,
     },
     pagination: {
       type: Boolean,
       default: true,
-    },
-    sortOrders: {
-      type: Object,
-      default: { key: null, value: null },
-    },
-    filtered: {
-      type: Object,
-      default: {},
     },
     page: {
       type: Number,
@@ -152,6 +143,14 @@ export default {
     size: {
       type: Number,
       default: 10,
+    },
+    sorted: {
+      type: Object,
+      default: { key: null, value: null },
+    },
+    filtered: {
+      type: Object,
+      default: {},
     },
     sizeOptions: {
       type: Array,
@@ -172,7 +171,7 @@ export default {
     });
     const isNoData = computed(() => props.dataSource.length === 0);
     const totalPage = computed(() => {
-      if (props.size === 0) {
+      if (props.totalData === 0 || props.size === 0) {
         table.page = 1;
         return 1;
       }
@@ -183,6 +182,7 @@ export default {
     const searchable = computed(() =>
       props.columns.some(({ filterable }) => filterable)
     );
+
     watch(
       () => props.dataSource,
       () => {
@@ -193,36 +193,38 @@ export default {
         });
       }
     );
-    const setSort = (key) => {
-      const { sortOrders } = props;
-      const value = sortOrders.key !== key ? 1 : -1 * sortOrders.value;
-      const newSortOrders = { key, value };
-      emit("onSortChanged", newSortOrders);
-      // console.log("[CTable] onSortChanged", newSortOrders);
-    };
-    const getSort = (key) => {
-      const { sortOrders } = props;
-      if (sortOrders.key !== key || sortOrders.value == undefined) return null;
-      return sortOrders.value > 0 ? "asc" : "desc";
-    };
+
     const setPage = (page) => {
       table.page = page;
-      emit("onPageChanged", page);
-      // console.log("[CTable] onPageChanged", page);
+      emit("update:page", page);
+      // console.log("[CTable] updatePage", page);
     };
     const setSize = (size) => {
       table.size = size;
-      emit("onSizeChanged", size);
-      // console.log("[CTable] onSizeChanged", size);
+      emit("update:size", size);
+      // console.log("[CTable] updateSize", size);
+    };
+    const setSort = (key) => {
+      const { sorted } = props;
+      const value = sorted.key !== key ? 1 : -1 * sorted.value;
+      const newSorted = { key, value };
+      emit("update:sorted", newSorted);
+      // console.log("[CTable] updateSorted", newsorted);
+    };
+    const getSort = (key) => {
+      const { sorted } = props;
+      if (sorted.key !== key || sorted.value == undefined) return null;
+      return sorted.value > 0 ? "asc" : "desc";
     };
     const setFilter = (key, e) => {
       const { filtered } = props;
       const { value } = e.target;
       if (filtered[key] === value) return;
       const newFiltered = { ...filtered, [key]: value };
-      emit("onFilterChanged", newFiltered);
-      // console.log("[CTable] onFilterChanged", newFiltered);
+      emit("update:filtered", newFiltered);
+      // console.log("[CTable] updateFiltered", newFiltered);
     };
+
     return {
       isNoData,
       totalPage,
@@ -235,9 +237,9 @@ export default {
       setFilter,
     };
   },
-  mounted() {
-    // console.log("[CTable] mounted", this);
-  },
+  // mounted() {
+  //   console.log("[CTable] mounted", this);
+  // },
 };
 </script>
 

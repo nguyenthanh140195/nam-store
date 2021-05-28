@@ -1,32 +1,62 @@
 import { createRouter, createWebHistory } from 'vue-router'
+
+import Layout1 from '../components/Layout/LayoutHeader.vue'
+import Layout2 from '../components/Layout/LayoutFooter.vue'
 import Home from '../views/Home.vue'
 
-const isLoggedIn = () => {
-  return true;
+const Login = () => import('../views/Login.vue')
+const About = () => import('../views/About.vue')
+const NotFound = () => import('../views/NotFound.vue')
+
+const ROLE = {
+  AD: "ADMIN",
+  US: "USER"
 }
 
 const routes = [
   {
     path: '/',
-    redirect: { name: 'Home' }
+    redirect: { name: 'Home' },
   },
   {
-    path: '/home',
-    name: 'Home',
-    component: Home,
-    meta: { noAuth: true },
+    component: Layout1,
+    children: [
+      {
+        path: '/home',
+        name: 'Home',
+        component: Home,
+        meta: { noAuth: true },
+      },
+      {
+        path: '/profile',
+        name: 'Profile',
+        meta: { roles: [ROLE.US, ROLE.AD] },
+        component: () => import(/* webpackChunkName: "group" */ '../views/Profile.vue'),
+      },
+    ]
+  },
+  {
+    component: Layout2,
+    children: [
+      {
+        path: '/login',
+        name: 'Login',
+        component: Login,
+        meta: { noAuth: true },
+      },
+    ]
   },
   {
     path: '/about',
     name: 'About',
+    component: About,
     meta: { noAuth: true },
-    component: () => import('../views/About.vue')
   },
   {
     path: '/:catchAll(.*)',
     name: 'NotFound',
+    component: NotFound,
     meta: { noAuth: true },
-    component: () => import('../views/Home.vue')
   },
 ]
 
@@ -37,8 +67,17 @@ const router = createRouter({
 })
 
 router.beforeEach((to, from, next) => {
-  if (to.meta.noAuth || isLoggedIn()) next()
-  else next({ name: 'Login', query: { redirect: to.name } })
+  if (to.meta.noAuth) next();
+  else if (!isLoggedIn()) next({ name: 'Login', query: { redirectedFrom: to.name } });
+  // else if (!checkPermission(to.meta.roles, "ADMIN")) next({ path: '/no-permission', query: { redirectedFrom: to.name } })
+  else next();
 })
+
+const isLoggedIn = () => {
+  return true;
+}
+const checkPermission = (pageRoles = [], userRole) => {
+  return pageRoles.includes(userRole);
+}
 
 export default router
