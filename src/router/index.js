@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import { isLoggedIn, checkPermission } from '@/helps/auth'
+import { isLoggedIn, checkPermission } from '@/utils/auth'
 
 import Layout1 from '@/components/Layout/LayoutHeader.vue'
 import Layout2 from '@/components/Layout/LayoutFooter.vue'

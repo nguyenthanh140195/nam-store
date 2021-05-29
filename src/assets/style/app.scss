@@ -1,0 +1,87 @@
+* {
+  box-sizing: border-box;
+}
+
+html {
+  line-height: 1.15;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+}
+
+img {
+  border-style: none;
+}
+
+table {
+  border-spacing: 0;
+  border-collapse: collapse;
+}
+
+a,
+ol,
+ul {
+  list-style: none;
+}
+
+/* -----------------------------------------------------
+                      # App
+----------------------------------------------------- */
+#app {
+  font-family: Avenir, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.app__wrapper {
+  width: 100vw;
+  height: 100vh;
+  color: #2c3e50;
+  overflow: hidden;
+}
+
+.app__loading {
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  position: fixed;
+  overflow: hidden;
+  background: #00000080;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@media only screen and (max-width: 480px) {
+  .app__wrapper {}
+}
+
+@media only screen and (min-width: 480px) and (max-width: 768px) {
+  .app__wrapper {}
+}
+
+@media only screen and (min-width: 768px) and (max-width: 1024px) {
+  .app__wrapper {}
+}
+
+/* -----------------------------------------------------
+                      # IE
+----------------------------------------------------- */
+@media screen and (minwidth:0\0) {
+  .app__wrapper {
+    background-color: rgb(230, 190, 14);
+  }
+}
+
+/* -----------------------------------------------------
+                      # Safari
+----------------------------------------------------- */
+@media not all and (min-resolution:.001dpcm) {
+  @supports (-webkit-appearance:none) {
+
+    .app__wrapper {}
+  }
+}

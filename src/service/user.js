@@ -1,3 +1,13 @@
+export const logout = () => {
+    return new Promise((resolve, reject) => {
+        const res = {
+            status: 200,
+            data: {}
+        }
+        resolve(res);
+    });
+}
+
 export const login = (payload) => {
     return new Promise((resolve, reject) => {
         const res = {
