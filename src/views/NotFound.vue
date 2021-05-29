@@ -11,12 +11,4 @@ export default {
 </script>
 
 <style lang="scss" scope>
-.wrapper {
-  .not-found {
-    min-width: 300px;
-    max-width: 600px;
-    margin: 200px auto;
-    text-align: center;
-  }
-}
 </style>

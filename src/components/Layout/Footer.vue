@@ -4,6 +4,7 @@ export default {
   render(vm, op) {
     return (
       <div class="footer">
+        <router-link to="/">Root</router-link> |
         <router-link to="/home">Home</router-link> |
         <router-link to="/profile">Profile</router-link> |
         <router-link to="/login">Login</router-link> |

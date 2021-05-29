@@ -1,68 +1,63 @@
 <template>
-  <div v-if="style === 0" class="lds-hourglass"></div>
-  <div v-else-if="style === 1" class="lds-dual-ring"></div>
-  <div v-else-if="style === 2" class="lds-ellipsis">
-    <div></div>
-    <div></div>
-    <div></div>
+  <div v-if="type === 0" class="lds-dual-ring" :style="styleLoading">
     <div></div>
   </div>
-  <div v-else-if="style === 3" class="lds-roller">
-    <div></div>
-    <div></div>
-    <div></div>
-    <div></div>
-    <div></div>
-    <div></div>
-    <div></div>
-    <div></div>
+  <div v-else-if="type === 1" class="lds-hourglass" :style="styleLoading">
+    <div :style="{ 'border-width': 0.5 * width + 'px' }"></div>
   </div>
-  <div v-else class="lds-spinner">
-    <div></div>
-    <div></div>
-    <div></div>
-    <div></div>
-    <div></div>
-    <div></div>
-    <div></div>
-    <div></div>
-    <div></div>
-    <div></div>
-    <div></div>
-    <div></div>
+  <div v-else class="lds-facebook" :style="styleLoading">
+    <div :style="styleLoading"></div>
+    <div :style="styleLoading"></div>
+    <div :style="styleLoading"></div>
+    <div :style="styleLoading"></div>
   </div>
 </template>
 
 <script>
+import { computed } from "@vue/runtime-core";
 export default {
   name: "Loading",
   props: {
-    style: {
+    type: {
       type: Number,
       default: 0,
     },
+    width: {
+      type: Number,
+      default: 22,
+    },
+    height: {
+      type: Number,
+      default: 22,
+    },
+  },
+  setup(props) {
+    const styleLoading = computed(() => {
+      return { width: props.width + "px", height: props.height + "px" };
+    });
+
+    return { styleLoading };
   },
 };
 </script>
 
 <style lang="scss" scope>
-//  https://loading.io/css/
+// https://loading.io/css/
+// https://loading.io/spinner/
 
-// style 0
+// type 0
 .lds-dual-ring {
   display: inline-block;
-  width: 80px;
-  height: 80px;
 }
-.lds-dual-ring:after {
+.lds-dual-ring div {
+  width: 100%;
+  height: 100%;
   content: " ";
   display: block;
-  width: 64px;
-  height: 64px;
   border-radius: 50%;
-  border: 6px solid #fff;
+  border: 4px solid #ffffff;
   border-color: #fff transparent #fff transparent;
-  animation: lds-dual-ring 2s linear infinite;
+  animation: lds-dual-ring 1.5s linear infinite;
 }
 @keyframes lds-dual-ring {
   0% {
@@ -73,24 +68,17 @@ export default {
   }
 }
 
-// style 1
+// type 1
 .lds-hourglass {
   display: inline-block;
-  position: relative;
-  width: 80px;
-  height: 80px;
 }
-.lds-hourglass:after {
+.lds-hourglass div {
   content: " ";
   display: block;
   border-radius: 50%;
-  width: 0;
-  height: 0;
-  margin: 8px;
-  box-sizing: border-box;
-  border: 32px solid #fff;
-  border-color: #fff transparent #fff transparent;
-  animation: lds-hourglass 1.2s infinite;
+  border: solid #ffffff;
+  border-color: #ffffff transparent #ffffff transparent;
+  animation: lds-hourglass 1.5s infinite;
 }
 @keyframes lds-hourglass {
   0% {
@@ -106,226 +94,36 @@ export default {
   }
 }
 
-// style 2
-.lds-ellipsis {
-  display: inline-block;
-  position: relative;
-  width: 80px;
-  height: 80px;
+// type other
+.lds-facebook {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
-.lds-ellipsis div {
-  position: absolute;
-  top: 33px;
-  width: 13px;
-  height: 13px;
-  border-radius: 50%;
-  background: #fff;
-  animation-timing-function: cubic-bezier(0, 1, 1, 0);
+.lds-facebook div {
+  margin: 0 5%;
+  background: #ffffff;
+  animation: lds-facebook 1.2s cubic-bezier(0, 0.5, 0.5, 1) infinite;
 }
-.lds-ellipsis div:nth-child(1) {
-  left: 8px;
-  animation: lds-ellipsis1 0.6s infinite;
+.lds-facebook div:nth-child(1) {
+  animation-delay: -0.36s;
 }
-.lds-ellipsis div:nth-child(2) {
-  left: 8px;
-  animation: lds-ellipsis2 0.6s infinite;
+.lds-facebook div:nth-child(2) {
+  animation-delay: -0.24s;
 }
-.lds-ellipsis div:nth-child(3) {
-  left: 32px;
-  animation: lds-ellipsis2 0.6s infinite;
+.lds-facebook div:nth-child(3) {
+  animation-delay: -0.12s;
 }
-.lds-ellipsis div:nth-child(4) {
-  left: 56px;
-  animation: lds-ellipsis3 0.6s infinite;
+.lds-facebook div:nth-child(4) {
+  animation-delay: 0;
 }
-@keyframes lds-ellipsis1 {
+@keyframes lds-facebook {
   0% {
-    transform: scale(0);
+    transform: scale(1, 1);
   }
+  50%,
   100% {
-    transform: scale(1);
-  }
-}
-@keyframes lds-ellipsis3 {
-  0% {
-    transform: scale(1);
-  }
-  100% {
-    transform: scale(0);
-  }
-}
-@keyframes lds-ellipsis2 {
-  0% {
-    transform: translate(0, 0);
-  }
-  100% {
-    transform: translate(24px, 0);
-  }
-}
-
-// style 3
-.lds-roller {
-  display: inline-block;
-  position: relative;
-  width: 80px;
-  height: 80px;
-}
-.lds-roller div {
-  animation: lds-roller 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
-  transform-origin: 40px 40px;
-}
-.lds-roller div:after {
-  content: " ";
-  display: block;
-  position: absolute;
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: #fff;
-  margin: -4px 0 0 -4px;
-}
-.lds-roller div:nth-child(1) {
-  animation-delay: -0.036s;
-}
-.lds-roller div:nth-child(1):after {
-  top: 63px;
-  left: 63px;
-}
-.lds-roller div:nth-child(2) {
-  animation-delay: -0.072s;
-}
-.lds-roller div:nth-child(2):after {
-  top: 68px;
-  left: 56px;
-}
-.lds-roller div:nth-child(3) {
-  animation-delay: -0.108s;
-}
-.lds-roller div:nth-child(3):after {
-  top: 71px;
-  left: 48px;
-}
-.lds-roller div:nth-child(4) {
-  animation-delay: -0.144s;
-}
-.lds-roller div:nth-child(4):after {
-  top: 72px;
-  left: 40px;
-}
-.lds-roller div:nth-child(5) {
-  animation-delay: -0.18s;
-}
-.lds-roller div:nth-child(5):after {
-  top: 71px;
-  left: 32px;
-}
-.lds-roller div:nth-child(6) {
-  animation-delay: -0.216s;
-}
-.lds-roller div:nth-child(6):after {
-  top: 68px;
-  left: 24px;
-}
-.lds-roller div:nth-child(7) {
-  animation-delay: -0.252s;
-}
-.lds-roller div:nth-child(7):after {
-  top: 63px;
-  left: 17px;
-}
-.lds-roller div:nth-child(8) {
-  animation-delay: -0.288s;
-}
-.lds-roller div:nth-child(8):after {
-  top: 56px;
-  left: 12px;
-}
-@keyframes lds-roller {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
-}
-
-// style other
-.lds-spinner {
-  color: official;
-  display: inline-block;
-  position: relative;
-  width: 80px;
-  height: 80px;
-}
-.lds-spinner div {
-  transform-origin: 40px 40px;
-  animation: lds-spinner 1.2s linear infinite;
-}
-.lds-spinner div:after {
-  content: " ";
-  display: block;
-  position: absolute;
-  top: 3px;
-  left: 37px;
-  width: 6px;
-  height: 18px;
-  border-radius: 20%;
-  background: #fff;
-}
-.lds-spinner div:nth-child(1) {
-  transform: rotate(0deg);
-  animation-delay: -1.1s;
-}
-.lds-spinner div:nth-child(2) {
-  transform: rotate(30deg);
-  animation-delay: -1s;
-}
-.lds-spinner div:nth-child(3) {
-  transform: rotate(60deg);
-  animation-delay: -0.9s;
-}
-.lds-spinner div:nth-child(4) {
-  transform: rotate(90deg);
-  animation-delay: -0.8s;
-}
-.lds-spinner div:nth-child(5) {
-  transform: rotate(120deg);
-  animation-delay: -0.7s;
-}
-.lds-spinner div:nth-child(6) {
-  transform: rotate(150deg);
-  animation-delay: -0.6s;
-}
-.lds-spinner div:nth-child(7) {
-  transform: rotate(180deg);
-  animation-delay: -0.5s;
-}
-.lds-spinner div:nth-child(8) {
-  transform: rotate(210deg);
-  animation-delay: -0.4s;
-}
-.lds-spinner div:nth-child(9) {
-  transform: rotate(240deg);
-  animation-delay: -0.3s;
-}
-.lds-spinner div:nth-child(10) {
-  transform: rotate(270deg);
-  animation-delay: -0.2s;
-}
-.lds-spinner div:nth-child(11) {
-  transform: rotate(300deg);
-  animation-delay: -0.1s;
-}
-.lds-spinner div:nth-child(12) {
-  transform: rotate(330deg);
-  animation-delay: 0s;
-}
-@keyframes lds-spinner {
-  0% {
-    opacity: 1;
-  }
-  100% {
-    opacity: 0;
+    transform: scale(1, 0.5);
   }
 }
 </style>

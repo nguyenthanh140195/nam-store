@@ -16,6 +16,11 @@ export const checkPermission = (pageRoles = [], userRole = '') => {
     return pageRoles.includes(userRole);
 };
 
+export const logout = () => {
+    removeToken();
+}
+
 export const isLoggedIn = () => {
-    return !!getToken();
+    return true;
+    // return !!getToken();
 }

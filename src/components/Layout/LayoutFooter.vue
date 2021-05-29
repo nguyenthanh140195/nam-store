@@ -1,31 +1,20 @@
-<template>
-  <div v-if="canAccess" class="wrapper">
-    <router-view class="wrapper__content" />
-    <Footer class="wrapper__footer" />
-    <router-view name="helper" class="wrapper__helper" />
-  </div>
-  <div v-else class="wrapper">
-    <div class="wrapper__no-permission">No permission</div>
-  </div>
-</template>
-
 <script>
-import { useStore } from "vuex";
-import { useRoute } from "vue-router";
 import Footer from "./Footer";
 export default {
   name: "Layout",
   components: { Footer },
-  setup(props) {
-    const store = useStore();
-    const route = useRoute();
-
-    const { noAuth, roles: pageRoles } = route.meta;
-    const permission = store.getters.checkPermission(pageRoles);
-    const canAccess = noAuth || permission;
-
-    return { canAccess };
+  render() {
+    return (
+      <div class="wrapper">
+        <router-view class="wrapper__content" />
+        <Footer class="wrapper__footer" />
+        <router-view name="helper" class="wrapper__helper" />
+      </div>
+    );
   },
+  // created() {
+  //   console.log("[Layout Footer] created", this);
+  // },
 };
 </script>
 
@@ -45,13 +34,6 @@ export default {
 
   &__helper {
     position: absolute;
-  }
-
-  &__no-permission {
-    min-width: 300px;
-    max-width: 600px;
-    margin: 200px auto;
-    text-align: center;
   }
 }
 </style>

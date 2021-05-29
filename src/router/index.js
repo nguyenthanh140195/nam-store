@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import { isLoggedIn, checkPermission } from '@/utils/auth'
+import { isLoggedIn, checkPermission, logout } from '@/utils/auth'
 
 import Layout1 from '@/components/Layout/LayoutHeader.vue'
 import Layout2 from '@/components/Layout/LayoutFooter.vue'
@@ -16,48 +16,54 @@ const ROLE = {
 
 const routes = [
   {
-    path: "/",
-    redirect: { name: "Home" },
-  },
-  {
+    path: '',
+    name: "Header",
     component: Layout1,
+    redirect: { name: "Home" },
     children: [
       {
         path: "/home",
         name: "Home",
         component: Home,
-        meta: { noAuth: true },
       },
       {
         path: "/profile",
         name: "Profile",
-        meta: { roles: [ROLE.US, ROLE.AD] },
+        meta: { requiresAuth: true, roles: [ROLE.US, ROLE.AD] },
         component: () => import(/* webpackChunkName: "group" */ '@/views/Profile.vue'),
       },
     ]
   },
   {
+    path: '',
+    name: "Footer",
     component: Layout2,
     children: [
       {
         path: "/login",
         name: "Login",
         component: Login,
-        meta: { noAuth: true },
+      },
+      {
+        path: "/logout",
+        name: "Logout",
+        beforeEnter(to, from, next) {
+          logout();
+          next({ name: "Home" });
+        }
       },
     ]
   },
   {
     path: "/about",
     name: "About",
+    alias: '/help',
     component: About,
-    meta: { noAuth: true },
   },
   {
     path: "/:catchAll(.*)",
     name: "NotFound",
     component: NotFound,
-    meta: { noAuth: true },
   },
 ]
 
@@ -68,9 +74,11 @@ const router = createRouter({
 })
 
 router.beforeEach((to, from, next) => {
-  if (to.meta.noAuth) next();
+  // console.log(`[Router] beforeEach: ${from.name} - ${to.name}`);
+
+  if (!to.meta.requiresAuth) next();
   else if (!isLoggedIn()) next({ name: "Login", query: { redirectedFrom: to.name } });
-  else if (!checkPermission(to.meta.roles, "ADMIN")) next(); // next({ path: "/no-permission", query: { redirectedFrom: to.name } });
+  // else if (!checkPermission(to.meta.roles, "ADMIN")) next({ path: "/no-permission", params: { redirectedFrom: to.name } });
   else next();
 })
 

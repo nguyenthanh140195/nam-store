@@ -2,7 +2,7 @@
   <router-view class="app__wrapper" :class="{ isMobile: $isMobile }" />
 
   <div v-if="$loading.count.value" class="app__loading">
-    <Loading />
+    <Loading :type="1" :width="64" :height="64" />
   </div>
 </template>
 
@@ -15,6 +15,7 @@ export default {
 </script>
 
 <style lang="scss">
-@import "./assets/style/app.scss";
+@import "./assets/style/normalize.scss";
 @import "./assets/style/material.scss";
+@import "./assets/style/app.scss";
 </style>
