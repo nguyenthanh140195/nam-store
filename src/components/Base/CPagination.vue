@@ -131,11 +131,13 @@ export default {
       margin-right: 6px;
     }
     .page__link {
-      cursor: pointer;
       padding: 3px 6px;
       margin-left: 5px;
       &:disabled {
         cursor: not-allowed;
+      }
+      &:hover {
+        cursor: pointer;
       }
     }
     select {

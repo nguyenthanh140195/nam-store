@@ -2,7 +2,7 @@
   <button
     v-bind="$attrs"
     class="n-button"
-    :class="[type, { loading: loading }]"
+    :class="[type, { loading }]"
     @click="$emit('click', $event)"
   >
     <div class="content">

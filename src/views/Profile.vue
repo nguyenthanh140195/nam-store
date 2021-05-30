@@ -1,8 +1,5 @@
 <template>
-  <div v-if="noPermission" class="profile">
-    <div class="no-permission">No permission</div>
-  </div>
-  <div v-else class="profile"></div>
+  <div v-auth="'No permission'" class="profile">Profile page</div>
 </template>
 
 <script>
