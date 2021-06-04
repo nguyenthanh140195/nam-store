@@ -1,6 +1,6 @@
 <template>
   <div v-if="type === 0" class="lds-dual-ring" :style="styleLoading">
-    <div></div>
+    <div :style="styleLoading"></div>
   </div>
   <div v-else-if="type === 1" class="lds-hourglass" :style="styleLoading">
     <div :style="{ 'border-width': 0.5 * width + 'px' }"></div>
@@ -50,8 +50,6 @@ export default {
   display: inline-block;
 }
 .lds-dual-ring div {
-  width: 100%;
-  height: 100%;
   content: " ";
   display: block;
   border-radius: 50%;

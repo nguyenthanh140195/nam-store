@@ -3,7 +3,6 @@
     v-bind="$attrs"
     class="n-button"
     :class="[type, { loading }]"
-    @click="$emit('click', $event)"
   >
     <div class="content">
       <slot v-if="iconLeft" name="iconLeft">
@@ -18,7 +17,7 @@
         </slot>
       </span>
 
-      <Loading v-if="loading" :type="2" />
+      <Spinner v-if="loading" :type="2" />
       <slot v-else-if="iconRight" name="iconRight">
         <span class="material-icons n-button__icon right">
           {{ iconRight }}
@@ -29,10 +28,10 @@
 </template>
 
 <script>
-import Loading from "./Loading";
+import Spinner from "./Spinner";
 export default {
   name: "Button",
-  components: { Loading },
+  components: { Spinner },
   props: {
     iconLeft: {
       type: String,

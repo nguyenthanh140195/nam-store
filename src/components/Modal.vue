@@ -1,6 +1,6 @@
 <template>
   <teleport to="body">
-    <transition appear name="n-modal">
+    <transition appear name="n-modal" duration="500">
       <div
         v-if="visible"
         tabindex="0"
@@ -182,7 +182,6 @@ export default {
 
 .n-modal-enter-active,
 .n-modal-leave-active {
-  transition: all 0.5s;
   .n-modal__content {
     transition: all 0.35s;
   }

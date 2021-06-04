@@ -1,13 +1,11 @@
 <template>
   <router-view class="app__wrapper" :class="{ isMobile: $isMobile }" />
 
-  <div v-if="$loading.count.value" class="app__loading">
-    <Loading :type="1" :width="64" :height="64" />
-  </div>
+  <Loading />
 </template>
 
 <script>
-import Loading from "./components/Loading";
+import Loading from "./loading/Loading.vue";
 export default {
   name: "App",
   components: { Loading },
