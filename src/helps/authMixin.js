@@ -1,4 +1,6 @@
+import { auth } from './directives'
 import { isLoggedIn } from '@/utils/auth'
+
 export default {
   computed: {
     noPermission() {
@@ -9,16 +11,7 @@ export default {
       return !checkPermission(roles);
     }
   },
-  directives: {
-    auth: {
-      mounted: function (el, binding, vnode) {
-        console.log("[authMixin] v-auth");
-        const { value = "No permission", instance: { noPermission } } = binding;
-        if (noPermission)
-          el.innerHTML = `<div class="no-permission">${value}</div>`;
-      }
-    }
-  },
+  directives: { auth },
   data() { return {}; },
   methods: {},
   // mounted() {

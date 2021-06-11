@@ -4,34 +4,34 @@ const SWIPE_ACTIVE_DIFF = 200
 
 const TRANSITION_MAP = {
   'top-left': {
-    bounce: 'n-toast__bounceInLeft',
-    zoom: 'n-toast__zoomIn',
-    slide: 'n-toast__slideInLeft'
+    bounce: 't-toast__bounceInLeft',
+    zoom: 't-toast__zoomIn',
+    slide: 't-toast__slideInLeft'
   },
   'top-right': {
-    bounce: 'n-toast__bounceInRight',
-    zoom: 'n-toast__zoomIn',
-    slide: 'n-toast__slideInRight'
+    bounce: 't-toast__bounceInRight',
+    zoom: 't-toast__zoomIn',
+    slide: 't-toast__slideInRight'
   },
   'top-center': {
-    bounce: 'n-toast__bounceInDown',
-    zoom: 'n-toast__zoomIn',
-    slide: 'n-toast__slideInDown'
+    bounce: 't-toast__bounceInDown',
+    zoom: 't-toast__zoomIn',
+    slide: 't-toast__slideInDown'
   },
   'bottom-center': {
-    bounce: 'n-toast__bounceInUp',
-    zoom: 'n-toast__zoomIn',
-    slide: 'n-toast__slideInUp'
+    bounce: 't-toast__bounceInUp',
+    zoom: 't-toast__zoomIn',
+    slide: 't-toast__slideInUp'
   },
   'bottom-right': {
-    bounce: 'n-toast__bounceInRight',
-    zoom: 'n-toast__zoomIn',
-    slide: 'n-toast__slideInRight'
+    bounce: 't-toast__bounceInRight',
+    zoom: 't-toast__zoomIn',
+    slide: 't-toast__slideInRight'
   },
   'bottom-left': {
-    bounce: 'n-toast__bounceInLeft',
-    zoom: 'n-toast__zoomIn',
-    slide: 'n-toast__slideInLeft'
+    bounce: 't-toast__bounceInLeft',
+    zoom: 't-toast__zoomIn',
+    slide: 't-toast__slideInLeft'
   }
 }
 
@@ -186,9 +186,9 @@ export const useTimer = (callback, delay) => {
 export const useTransitionType = (position, transition, swiped) => {
   const transitionType = computed(() => {
     if (swiped.value > SWIPE_ACTIVE_DIFF) {
-      return 'n-toast__fadeOutLeft'
+      return 't-toast__fadeOutLeft'
     } else if (swiped.value < -SWIPE_ACTIVE_DIFF) {
-      return 'n-toast__fadeOutRight'
+      return 't-toast__fadeOutRight'
     } else {
       return TRANSITION_MAP[position][transition]
     }

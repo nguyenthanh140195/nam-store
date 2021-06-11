@@ -1,4 +1,4 @@
-import { isScreenMobile } from './isMobile'
+import { isScreenMobile } from '@/utils/isMobile'
 
 export default {
     install: (app, options) => {

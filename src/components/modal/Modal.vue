@@ -1,6 +1,6 @@
 <template>
   <teleport to="body">
-    <transition appear name="n-modal" duration="500">
+    <transition appear name="t-modal" duration="500">
       <div
         v-if="visible"
         tabindex="0"
@@ -20,7 +20,9 @@
             </slot>
           </div>
           <div class="body">
-            <slot />
+            <slot>
+              <div v-if="content" class="title" v-html="content" />
+            </slot>
           </div>
           <div class="footer">
             <slot name="footer">
@@ -39,7 +41,7 @@
 <script>
 // import { ref } from "@vue/reactivity";
 // import { watch, computed } from "@vue/runtime-core";
-import Button from "./Button.vue";
+import Button from "../Button.vue";
 export default {
   name: "Modal",
   components: { Button },
@@ -53,8 +55,9 @@ export default {
       type: Boolean,
       default: false,
     },
-    className: String,
     title: String,
+    content: String,
+    className: String,
     okText: {
       type: String,
       default: "OK",
@@ -180,19 +183,19 @@ export default {
   }
 }
 
-.n-modal-enter-active,
-.n-modal-leave-active {
+.t-modal-enter-active,
+.t-modal-leave-active {
   .n-modal__content {
     transition: all 0.35s;
   }
 }
 
-.n-modal-enter-to {
+.t-modal-enter-to {
   .n-modal__content {
     animation: animationContent 0.5s;
   }
 }
-.n-modal-leave-to {
+.t-modal-leave-to {
   .n-modal__content {
     opacity: 0;
     transform: scale(0.5);

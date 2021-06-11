@@ -144,7 +144,7 @@
 /* ------------------------------------------
                  bounceAnimation
 ------------------------------------------ */
-.n-toast {
+.t-toast {
   &__bounceInRight-enter-active {
     -webkit-animation: bounceInRight .7s;
     animation: bounceInRight .7s;
@@ -634,7 +634,7 @@
 /* ------------------------------------------
                  fadeAnimation
 ------------------------------------------ */
-.n-toast {
+.t-toast {
   &__fadeOutRight-leave-active {
     -webkit-animation: fadeOutRight .5s;
     animation: fadeOutRight .5s;
@@ -700,7 +700,7 @@
 /* ------------------------------------------
                  slideAnimation
 ------------------------------------------ */
-.n-toast {
+.t-toast {
   &__slideInRight-enter-active {
     -webkit-animation: slideInRight .5s;
     animation: slideInRight .5s;
@@ -946,7 +946,7 @@
 /* ------------------------------------------
                  zoomAnimation
 ------------------------------------------ */
-.n-toast {
+.t-toast {
   &__zoomIn-enter-active {
     animation: zoomIn .5s;
   }
