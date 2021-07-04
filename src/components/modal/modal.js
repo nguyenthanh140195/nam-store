@@ -1,8 +1,47 @@
-import { createVNode, render } from 'vue'
+import { createVNode, defineComponent, render } from 'vue'
 import Modal from './Modal.vue'
 
-export const confirm = (props) => {
-  const { title, content, okText, cancelText, onOk: ok = f => f, onCancel: cancel = f => f } = props;
+// export const info = (props = {}) => {
+//   const { content = "info!", onOk: ok = f => f } = props;
+
+//   const close = () => {
+//     vNode.component.props.visible = false
+//   }
+//   const onOk = () => {
+//     close()
+//     ok()
+//   }
+
+//   const vNodeProps = {
+//     ...props,
+//     visible: false,
+//     content,
+//   }
+//   const ModalComponent = defineComponent({
+//     ...Modal,
+//     setup: (props, context) => {
+//       const clickOK = () => {
+//         onOk();
+//       };
+//       const clickClose = () => {
+//         close();
+//       };
+
+//       return { clickOK, clickClose };
+//     },
+//   })
+//   const vNode = createVNode(ModalComponent, vNodeProps)
+//   const container = document.createElement('div')
+//   document.body.appendChild(container)
+//   render(vNode, container)
+
+//   if (vNode.component) {
+//     vNode.component.props.visible = true
+//   }
+// }
+
+export const confirm = (props = {}) => {
+  const { content = "confirm?", okText = "Confirm", cancelText = "Cancel", onOk: ok = f => f, onCancel: cancel = f => f } = props;
 
   const close = () => {
     vNode.component.props.visible = false
@@ -17,19 +56,29 @@ export const confirm = (props) => {
   }
 
   const vNodeProps = {
+    ...props,
     visible: false,
-    title,
     content,
     okText,
     cancelText,
   }
-  const vNodeEmit = {
-    onClose: close,
-    onOk,
-    onCancel
-  }
-  //: TODO: pass emits
-  const vNode = createVNode(Modal, vNodeProps)
+  const ModalComponent = defineComponent({
+    ...Modal,
+    setup: (props, context) => {
+      const clickOK = () => {
+        onOk();
+      };
+      const clickCancel = () => {
+        onCancel();
+      };
+      const clickClose = () => {
+        close();
+      };
+
+      return { clickOK, clickCancel, clickClose };
+    },
+  })
+  const vNode = createVNode(ModalComponent, vNodeProps)
   const container = document.createElement('div')
   document.body.appendChild(container)
   render(vNode, container)

@@ -24,6 +24,7 @@
       <ul class="n-skeleton__content__paragraph">
         <li></li>
         <li></li>
+        <li></li>
         <li style="width: 61%"></li>
       </ul>
     </div>
@@ -68,25 +69,9 @@ export default {
 
 <style lang="scss" scope>
 @mixin m-skeleton($duration) {
-  overflow: hidden;
-  position: relative;
-  &::after {
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    content: "";
-    position: absolute;
-    transform: translateX(-100%);
-    background-image: linear-gradient(
-      90deg,
-      rgba(#ffffff, 0) 0,
-      rgba(#ffffff, 0.2) 20%,
-      rgba(#ffffff, 0.5) 60%,
-      rgba(#ffffff, 0)
-    );
-    animation: skeleton-loading $duration infinite;
-  }
+  background: linear-gradient(90deg, #f2f2f2 25%, #e6e6e6 37%, #f2f2f2 63%);
+  background-size: 400% 100%;
+  animation: skeleton-loading $duration infinite;
 }
 .n-skeleton {
   gap: 16px;
@@ -195,8 +180,11 @@ export default {
   }
 }
 @keyframes skeleton-loading {
+  0% {
+    background-position: 100% 50%;
+  }
   100% {
-    transform: translateX(100%);
+    background-position: 0 50%;
   }
 }
 </style>

@@ -1,5 +1,18 @@
 <template>
   <div class="test-table">
+    <Popper>
+      <template v-slot:trigger>
+        <div>Hover</div>
+      </template>
+      <div>
+        <div>1</div>
+        <div>2</div>
+        <div>3</div>
+        <div>4</div>
+        <div>5</div>
+      </div>
+    </Popper>
+    <br />
     sorted: {{ table.sorted }}
     <br />
     filtered: {{ table.filtered }}
@@ -50,6 +63,7 @@
 <script>
 import { toRefs, ref, reactive, computed, onMounted } from "vue";
 import CTable from "./Base/CTable";
+import Popper from "./popper/Popper.vue";
 const _columns = [
   {
     key: "no",
@@ -128,7 +142,7 @@ const _columns2 = [
 ];
 export default {
   name: "TestTable",
-  components: { CTable },
+  components: { CTable, Popper },
   setup() {
     const columns = ref(_columns2);
     const table = reactive({

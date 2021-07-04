@@ -1,7 +1,7 @@
 
 import { createVNode, render, inject } from 'vue'
 import Toast from './Toast.vue'
-import './toast.scss'
+// import './toast.scss'
 
 const toastSymbol = Symbol("toast");
 

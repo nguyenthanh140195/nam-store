@@ -16,7 +16,7 @@
           <div class="header">
             <slot name="header">
               <div v-if="title" class="title" v-html="title" />
-              <div class="close" @click="clickClose">&Chi;</div>
+              <div v-if="title" class="close" @click="clickClose">&Chi;</div>
             </slot>
           </div>
           <div class="body">
@@ -39,10 +39,9 @@
 </template>
 
 <script>
-// import { ref } from "@vue/reactivity";
-// import { watch, computed } from "@vue/runtime-core";
+import { defineComponent } from "@vue/runtime-core";
 import Button from "../Button.vue";
-export default {
+export default defineComponent({
   name: "Modal",
   components: { Button },
   emits: ["onClose", "onOK", "onCancel"],
@@ -85,8 +84,7 @@ export default {
 
     return { clickOK, clickCancel, clickClose, clickOutside };
   },
-  mounted() {},
-};
+});
 </script>
 
 <style lang="scss" scope>
@@ -186,7 +184,7 @@ export default {
 .t-modal-enter-active,
 .t-modal-leave-active {
   .n-modal__content {
-    transition: all 0.35s;
+    transition: all 0.5s;
   }
 }
 

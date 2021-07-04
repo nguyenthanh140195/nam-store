@@ -8,6 +8,7 @@ import toast from './toast/toast'
 // import mixin from './helps/mixin'
 import plugins from './helps/plugins'
 import loading from './loading/loading'
+// import mediaQuery from './helps/mediaQuery'
 import directives from './helps/directives'
 
 let app = createApp(App)
@@ -19,6 +20,7 @@ app.use(toast)
 // app.use(i18n)
 app.use(plugins)
 app.use(loading)
+// app.use(mediaQuery)
 // app.mixin(mixin)
 app.use(directives)
 

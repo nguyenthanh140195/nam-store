@@ -5,6 +5,7 @@
     <Button type="link">link</Button>
     <Button type="primary" iconRight="search">primary</Button>
 
+    <Button @click="openConfirm">confirm</Button>
     <Button @click="setOpen(true)">Open Modal</Button>
     <Button @click="showToast1">Show Toast 1</Button>
     <Button @click="showToast2">Show Toast 2</Button>
@@ -34,6 +35,7 @@ import CountDown from "./CountDown";
 import Skeleton from "./Skeleton";
 import Button from "./Button";
 import Modal from "./modal/Modal.vue";
+import { confirm } from "./modal/modal";
 export default {
   name: "Test1",
   components: { CountDown, Skeleton, Button, Modal },
@@ -49,6 +51,11 @@ export default {
       createToast(content);
     };
     return { open, setOpen, showToast1, showToast2 };
+  },
+  methods: {
+    openConfirm() {
+      confirm();
+    },
   },
   mounted() {},
 };
