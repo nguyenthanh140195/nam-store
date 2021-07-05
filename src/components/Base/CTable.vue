@@ -15,6 +15,17 @@
                 @click="setSort(column.key)"
                 :class="['arrow', getSort(column.key)]"
               />
+              <span v-if="column.filters" class="filter">
+                <span @click="setShow(column.key)">v</span>
+                <span v-if="show === column.key" class="popover">
+                  <CFilter
+                    :options="column.filters"
+                    :selected="table.filtered[column.key]"
+                    @onReset="setFilter(column.key)"
+                    @onOk="setFilter(column.key, $event)"
+                  />
+                </span>
+              </span>
             </div>
           </th>
         </tr>
@@ -28,8 +39,8 @@
               <input
                 type="text"
                 class="search"
-                :value="filtered[column.key]"
-                @change="setFilter(column.key, $event)"
+                :value="searched[column.key]"
+                @change="setSearch(column.key, $event)"
               />
             </div>
           </th>
@@ -94,7 +105,8 @@
 </template>
 
 <script>
-import { toRefs, ref, reactive, computed, watch, nextTick } from "vue";
+import { reactive, computed, watch, nextTick, ref } from "vue";
+import CFilter from "./CFilter";
 import CPagination from "./CPagination";
 
 export default {
@@ -104,9 +116,9 @@ export default {
     "update:page",
     "update:size",
     "update:sorted",
-    "update:filtered",
+    "update:searched",
   ],
-  components: { CPagination },
+  components: { CFilter, CPagination },
   props: {
     hover: Boolean,
     striped: Boolean,
@@ -148,6 +160,10 @@ export default {
       type: Object,
       default: { key: null, value: null },
     },
+    searched: {
+      type: Object,
+      default: {},
+    },
     filtered: {
       type: Object,
       default: {},
@@ -165,9 +181,13 @@ export default {
   },
   setup(props, context) {
     const { emit } = context;
+    const show = ref(null);
     const table = reactive({
       page: props.page,
       size: props.size,
+      sorted: {},
+      filtered: {},
+      searched: {},
     });
     const isNoData = computed(() => props.dataSource.length === 0);
     const totalPage = computed(() => {
@@ -216,13 +236,21 @@ export default {
       if (sorted.key !== key || sorted.value == undefined) return null;
       return sorted.value > 0 ? "asc" : "desc";
     };
-    const setFilter = (key, e) => {
-      const { filtered } = props;
+    const setSearch = (key, e) => {
+      const { searched } = props;
       const { value } = e.target;
-      if (filtered[key] === value) return;
-      const newFiltered = { ...filtered, [key]: value };
-      emit("update:filtered", newFiltered);
-      // console.log("[CTable] updateFiltered", newFiltered);
+      if (searched[key] === value) return;
+      const newSearched = { ...searched, [key]: value };
+      emit("update:searched", newSearched);
+      // console.log("[CTable] updateSearched", newSearched);
+    };
+
+    const setShow = (key) => {
+      show.value = show.value === key ? null : key;
+    };
+    const setFilter = (key, value = []) => {
+      show.value = null;
+      table.filtered[key] = value;
     };
 
     return {
@@ -230,10 +258,13 @@ export default {
       totalPage,
       searchable,
       table,
+      show,
+      setShow,
       setSort,
       getSort,
       setSize,
       setPage,
+      setSearch,
       setFilter,
     };
   },
@@ -328,6 +359,9 @@ $color-border: #42b983;
           border-left: 6px solid transparent;
           border-right: 6px solid transparent;
         }
+      }
+
+      .filter {
       }
     }
   }

@@ -1,6 +1,6 @@
 <template>
   <div class="test-table">
-    <Popper>
+    <!-- <Popper>
       <template v-slot:trigger>
         <div>Hover</div>
       </template>
@@ -11,11 +11,11 @@
         <div>4</div>
         <div>5</div>
       </div>
-    </Popper>
+    </Popper> -->
     <br />
     sorted: {{ table.sorted }}
     <br />
-    filtered: {{ table.filtered }}
+    searched: {{ table.searched }}
     <CTable
       hover
       striped
@@ -23,7 +23,7 @@
       v-model:page="table.page"
       v-model:size="table.size"
       v-model:sorted="table.sorted"
-      v-model:filtered="table.filtered"
+      v-model:searched="table.searched"
       :columns="table.columns"
       :totalData="table.totalData"
       :dataSource="table.dataSource"
@@ -31,7 +31,8 @@
     />
     <br />
     <br />
-    <CTable
+    <CFilter :selected="['One']" @onOk="log($event)" @onReset="log('Reset')" />
+    <!-- <CTable
       v-slot="{ row, index, page, size }"
       :page="table.page"
       :size="table.size"
@@ -56,13 +57,14 @@
           {{ row[column.key] }}
         </div>
       </td>
-    </CTable>
+    </CTable> -->
   </div>
 </template>
 
 <script>
 import { toRefs, ref, reactive, computed, onMounted } from "vue";
 import CTable from "./Base/CTable";
+import CFilter from "./Base/CFilter";
 import Popper from "./popper/Popper.vue";
 const _columns = [
   {
@@ -70,6 +72,7 @@ const _columns = [
     width: "5%",
     label: "No",
     align: "center",
+    filters: ["1", "2", "3"],
     render: (row, { page, index, size }) => (page - 1) * size + index + 1,
   },
   {
@@ -80,6 +83,7 @@ const _columns = [
     filterable: true,
     headClass: "col-name",
     celClass: "cel-name",
+    filters: ["1", "2", "3"],
     render: (row) => row.name,
   },
   {
@@ -87,6 +91,7 @@ const _columns = [
     width: "30%",
     label: "Power",
     sortable: true,
+    filters: ["1", "2", "3"],
     filterable: true,
   },
   {
@@ -142,14 +147,14 @@ const _columns2 = [
 ];
 export default {
   name: "TestTable",
-  components: { CTable, Popper },
+  components: { CTable, Popper, CFilter },
   setup() {
     const columns = ref(_columns2);
     const table = reactive({
       page: 1,
       size: 10,
       sorted: {},
-      filtered: {},
+      searched: {},
       totalData: 0,
       columns: [],
       dataSource: [],
@@ -170,9 +175,13 @@ export default {
       table.sorted = sort;
       // console.log("[TEST] updateSorted", sort);
     };
-    const updateFiltered = (filter) => {
-      table.filtered = filter;
-      // console.log("[TEST] updateFiltered", filter);
+    const updateSearched = (filter) => {
+      table.searched = filter;
+      // console.log("[TEST] updateSearched", filter);
+    };
+
+    const log = (mes) => {
+      console.log(mes);
     };
 
     onMounted(() => {
@@ -184,11 +193,12 @@ export default {
     return {
       table,
       columns,
+      log,
       isFinished,
       updateSorted,
       updateSize,
       updatePage,
-      updateFiltered,
+      updateSearched,
     };
   },
   mounted() {
