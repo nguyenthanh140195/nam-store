@@ -16,6 +16,8 @@
     sorted: {{ table.sorted }}
     <br />
     searched: {{ table.searched }}
+    <br />
+    searched: {{ table.filtered }}
     <CTable
       hover
       striped
@@ -24,6 +26,7 @@
       v-model:size="table.size"
       v-model:sorted="table.sorted"
       v-model:searched="table.searched"
+      v-model:filtered="table.filtered"
       :columns="table.columns"
       :totalData="table.totalData"
       :dataSource="table.dataSource"
@@ -31,7 +34,7 @@
     />
     <br />
     <br />
-    <CFilter :selected="['One']" @onOk="log($event)" @onReset="log('Reset')" />
+    <!-- <CFilter :selected="['One']" @onOk="log($event)" @onReset="log('Reset')" /> -->
     <!-- <CTable
       v-slot="{ row, index, page, size }"
       :page="table.page"
@@ -80,6 +83,7 @@ const _columns = [
     width: "60%",
     label: "Name",
     sortable: true,
+    searchable: true,
     filterable: true,
     headClass: "col-name",
     celClass: "cel-name",
@@ -91,8 +95,9 @@ const _columns = [
     width: "30%",
     label: "Power",
     sortable: true,
-    filters: ["1", "2", "3"],
     filterable: true,
+    filters: ["1", "2", "3"],
+    searchable: true,
   },
   {
     key: "action",
@@ -155,6 +160,7 @@ export default {
       size: 10,
       sorted: {},
       searched: {},
+      filtered: {},
       totalData: 0,
       columns: [],
       dataSource: [],

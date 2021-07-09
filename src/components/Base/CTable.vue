@@ -7,20 +7,34 @@
             v-for="column in columns"
             :key="column.key"
             :style="{ width: column.width }"
-            :class="['c-table__head__cel', { sort: column.sortable }]"
+            class="c-table__head__cel"
+            :class="[
+              'text-' + column.align,
+              { sortable: column.sortable },
+              { filterable: column.filterable },
+            ]"
           >
-            <div :class="column.headClass">
+            <div class="cel-content">
               <label>{{ column.label }}</label>
               <span
-                @click="setSort(column.key)"
-                :class="['arrow', getSort(column.key)]"
-              />
-              <span v-if="column.filters" class="filter">
-                <span @click="setShow(column.key)">v</span>
-                <span v-if="show === column.key" class="popover">
+                v-if="column.sortable"
+                class="sort"
+                @click="clickSort(column.key)"
+              >
+                ±
+                <span :class="getSort(column.key)" />
+              </span>
+              <span v-if="column.filterable" class="filter">
+                <span
+                  :class="{ filtered: tableState.filtered[column.key].length }"
+                  @click="setShowFilterKey(column.key)"
+                >
+                  @
+                </span>
+                <span v-if="showFilterKey === column.key" class="popover">
                   <CFilter
                     :options="column.filters"
-                    :selected="table.filtered[column.key]"
+                    :selected="tableState.filtered[column.key]"
                     @onReset="setFilter(column.key)"
                     @onOk="setFilter(column.key, $event)"
                   />
@@ -29,18 +43,18 @@
             </div>
           </th>
         </tr>
-        <tr class="c-table__search" v-if="searchable">
+        <tr class="c-table__search" v-if="isSearchable">
           <th
             v-for="column in columns"
             :key="column.key"
-            :class="['c-table__search__cel', { sort: column.sortable }]"
+            class="c-table__search__cel"
           >
-            <div v-if="column.filterable">
+            <div v-if="column.searchable" class="cel-content">
               <input
                 type="text"
                 class="search"
                 :value="searched[column.key]"
-                @change="setSearch(column.key, $event)"
+                @change="changeSearch(column.key, $event)"
               />
             </div>
           </th>
@@ -59,18 +73,19 @@
           :key="index"
           class="c-table__row"
         >
-          <slot :row="row" :index="index" v-bind="table">
+          <slot :row="row" :index="index" v-bind="tableState">
             <td
               v-for="column in columns"
               :key="column.key"
-              :class="['c-table__row__cel', 'text-' + column.align]"
+              class="c-table__row__cel"
+              :class="'text-' + column.align"
             >
               <div
                 v-if="column.render"
-                :class="column.celClass"
-                v-html="column.render(row, { index, ...table })"
+                class="cel-content"
+                v-html="column.render(row, { index, ...tableState })"
               />
-              <div v-else :class="column.celClass">
+              <div v-else class="cel-content">
                 {{ row[column.key] }}
               </div>
             </td>
@@ -93,8 +108,8 @@
     </table>
     <CPagination
       v-if="pagination"
-      :page="table.page"
-      :size="table.size"
+      :page="tableState.page"
+      :size="tableState.size"
       @update:page="setPage"
       @update:size="setSize"
       :totalPage="totalPage"
@@ -108,15 +123,21 @@
 import { reactive, computed, watch, nextTick, ref } from "vue";
 import CFilter from "./CFilter";
 import CPagination from "./CPagination";
+const SORT_TYPE = {
+  ASC: "asc",
+  DESC: "desc",
+};
 
 export default {
   name: "CTable",
   emits: [
     "isFinished",
+    "tableChange",
     "update:page",
     "update:size",
     "update:sorted",
     "update:searched",
+    "update:filtered",
   ],
   components: { CFilter, CPagination },
   props: {
@@ -148,6 +169,20 @@ export default {
       type: Boolean,
       default: true,
     },
+    sizeOptions: {
+      type: Array,
+      default: [0, 10, 20, 50],
+    },
+    tableInfo: {
+      type: Object,
+      default: {
+        nodataText: "No data",
+      },
+    },
+    forceUpdate: {
+      type: Boolean,
+      default: false,
+    },
     page: {
       type: Number,
       default: 1,
@@ -168,39 +203,29 @@ export default {
       type: Object,
       default: {},
     },
-    sizeOptions: {
-      type: Array,
-      default: [0, 10, 20, 50],
-    },
-    tableInfo: {
-      type: Object,
-      default: {
-        nodataText: "No data",
-      },
-    },
   },
   setup(props, context) {
     const { emit } = context;
-    const show = ref(null);
-    const table = reactive({
+    const tableState = reactive({
       page: props.page,
       size: props.size,
-      sorted: {},
-      filtered: {},
-      searched: {},
+      sorted: props.sorted,
+      filtered: props.filtered,
+      searched: props.searched,
     });
-    const isNoData = computed(() => props.dataSource.length === 0);
+    const showFilterKey = ref(null);
     const totalPage = computed(() => {
-      if (props.totalData === 0 || props.size === 0) {
-        table.page = 1;
+      if (props.totalData === 0 || tableState.size === 0) {
+        tableState.page = 1;
         return 1;
       }
-      const total = Math.ceil(props.totalData / props.size);
-      table.page = table.page > total ? total : table.page;
+      const total = Math.ceil(props.totalData / tableState.size);
+      tableState.page = tableState.page > total ? total : tableState.page;
       return total;
     });
-    const searchable = computed(() =>
-      props.columns.some(({ filterable }) => filterable)
+    const isNoData = computed(() => !props.dataSource.length);
+    const isSearchable = computed(() =>
+      props.columns.some(({ searchable }) => searchable)
     );
 
     watch(
@@ -213,57 +238,85 @@ export default {
         });
       }
     );
+    watch(
+      () => [
+        tableState.page,
+        tableState.size,
+        tableState.sorted,
+        tableState.filtered,
+        tableState.searched,
+      ],
+      () => {
+        emit("tableChange", { ...tableState });
+      }
+    );
 
     const setPage = (page) => {
-      table.page = page;
+      tableState.page = page;
       emit("update:page", page);
       // console.log("[CTable] updatePage", page);
     };
     const setSize = (size) => {
-      table.size = size;
+      tableState.size = size;
       emit("update:size", size);
       // console.log("[CTable] updateSize", size);
     };
-    const setSort = (key) => {
-      const { sorted } = props;
-      const value = sorted.key !== key ? 1 : -1 * sorted.value;
+    const setSort = (key, value) => {
       const newSorted = { key, value };
+      tableState.sorted = newSorted;
       emit("update:sorted", newSorted);
       // console.log("[CTable] updateSorted", newsorted);
     };
-    const getSort = (key) => {
-      const { sorted } = props;
-      if (sorted.key !== key || sorted.value == undefined) return null;
-      return sorted.value > 0 ? "asc" : "desc";
-    };
-    const setSearch = (key, e) => {
-      const { searched } = props;
-      const { value } = e.target;
+    const setSearch = (key, value) => {
+      const { searched } = tableState;
       if (searched[key] === value) return;
       const newSearched = { ...searched, [key]: value };
+      tableState.searched = newSearched;
       emit("update:searched", newSearched);
       // console.log("[CTable] updateSearched", newSearched);
     };
-
-    const setShow = (key) => {
-      show.value = show.value === key ? null : key;
+    const setFilter = (key, value) => {
+      showFilterKey.value = null;
+      tableState.filtered[key] = value;
+      emit("update:filtered", { ...tableState.filtered });
     };
-    const setFilter = (key, value = []) => {
-      show.value = null;
-      table.filtered[key] = value;
+
+    const changeSearch = (key, e) => {
+      const { value } = e.target;
+      setSearch(key, value);
+    };
+    const clickSort = (key) => {
+      const { sorted } = tableState;
+      const value =
+        sorted.key !== key
+          ? SORT_TYPE.ASC
+          : sorted.value === SORT_TYPE.ASC
+          ? SORT_TYPE.DESC
+          : SORT_TYPE.ASC;
+      setSort(key, value);
+    };
+    const getSort = (key) => {
+      const { sorted } = tableState;
+      if (sorted.key !== key || sorted.value == undefined) return null;
+      return sorted.value;
+    };
+    const setShowFilterKey = (key) => {
+      showFilterKey.value = showFilterKey.value === key ? null : key;
     };
 
     return {
-      isNoData,
+      tableState,
       totalPage,
-      searchable,
-      table,
-      show,
-      setShow,
-      setSort,
+      isNoData,
+      isSearchable,
+      showFilterKey,
+      setShowFilterKey,
+      clickSort,
+      changeSearch,
       getSort,
-      setSize,
       setPage,
+      setSize,
+      setSort,
       setSearch,
       setFilter,
     };
@@ -280,11 +333,12 @@ $color-even: #f6f6f6;
 $color-hover: #f0f0f0;
 $color-row: #abcdef6b;
 $color-head: #42b983;
-$color-arrow: #ffffff;
+$color-sort: #ffffff;
 $color-border: #42b983;
 
 .c-table {
   width: 100%;
+  text-align: left;
   border-collapse: collapse;
   border: 2px solid $color-head;
 
@@ -319,49 +373,60 @@ $color-border: #42b983;
       border: 1px solid $color-border;
       position: relative;
       background-color: $color-head;
-      &.sort {
-        padding-right: 45px;
-        .arrow {
-          display: inline-block;
+      .cel-content {
+        display: flex;
+        label {
+          flex: 100%;
         }
-        .arrow.asc::before {
-          opacity: 1;
+
+        .sort {
+          cursor: pointer;
+          span {
+            &::before {
+              right: 20px;
+              bottom: 50%;
+              opacity: 0.35;
+              position: absolute;
+              margin-bottom: 1px;
+              content: "";
+              border-bottom: 6px solid $color-sort;
+              border-left: 6px solid transparent;
+              border-right: 6px solid transparent;
+            }
+
+            &::after {
+              top: 50%;
+              right: 20px;
+              opacity: 0.35;
+              position: absolute;
+              margin-top: 1px;
+              content: "";
+              border-top: 6px solid $color-sort;
+              border-left: 6px solid transparent;
+              border-right: 6px solid transparent;
+            }
+          }
         }
-        .arrow.desc::after {
-          opacity: 1;
+        .filter {
+          position: relative;
+          .popover {
+            z-index: 2;
+            position: absolute;
+            top: 100%;
+            left: auto;
+            right: 0;
+          }
         }
       }
-
-      .arrow {
-        display: none;
-        cursor: pointer;
-
-        &::before {
-          right: 20px;
-          bottom: 50%;
-          opacity: 0.35;
-          position: absolute;
-          margin-bottom: 1px;
-          content: "";
-          border-bottom: 6px solid $color-arrow;
-          border-left: 6px solid transparent;
-          border-right: 6px solid transparent;
+      &.sortable {
+        .cel-content {
+          .sort span.asc::before {
+            opacity: 1;
+          }
+          .sort span.desc::after {
+            opacity: 1;
+          }
         }
-
-        &::after {
-          top: 50%;
-          right: 20px;
-          opacity: 0.35;
-          position: absolute;
-          margin-top: 1px;
-          content: "";
-          border-top: 6px solid $color-arrow;
-          border-left: 6px solid transparent;
-          border-right: 6px solid transparent;
-        }
-      }
-
-      .filter {
       }
     }
   }
@@ -381,6 +446,7 @@ $color-border: #42b983;
       text-align: left;
     }
     &__no-data {
+      text-align: center;
       padding: 10px 20px;
     }
   }
