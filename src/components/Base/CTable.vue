@@ -26,7 +26,7 @@
               </span>
               <span v-if="column.filterable" class="filter">
                 <span
-                  :class="{ filtered: tableState.filtered[column.key].length }"
+                  :class="{ filtered: tableState.filtered[column.key] }"
                   @click="setShowFilterKey(column.key)"
                 >
                   @
@@ -53,7 +53,7 @@
               <input
                 type="text"
                 class="search"
-                :value="searched[column.key]"
+                :value="tableState.searched[column.key]"
                 @change="changeSearch(column.key, $event)"
               />
             </div>
@@ -272,13 +272,16 @@ export default {
       if (searched[key] === value) return;
       const newSearched = { ...searched, [key]: value };
       tableState.searched = newSearched;
-      emit("update:searched", newSearched);
+      emit("update:searched", { key, value }, { ...newSearched });
       // console.log("[CTable] updateSearched", newSearched);
     };
     const setFilter = (key, value) => {
       showFilterKey.value = null;
-      tableState.filtered[key] = value;
-      emit("update:filtered", { ...tableState.filtered });
+      const { filtered } = tableState;
+      const newFiltered = { ...filtered, [key]: value };
+      tableState.filtered = newFiltered;
+      emit("update:filtered", { key, value }, { ...newFiltered });
+      // console.log("[CTable] updateFiltered", newSearched);
     };
 
     const changeSearch = (key, e) => {

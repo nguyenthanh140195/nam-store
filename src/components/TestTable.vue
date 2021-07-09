@@ -31,6 +31,7 @@
       :totalData="table.totalData"
       :dataSource="table.dataSource"
       @isFinished="isFinished"
+      @tableChange="tableChange"
     />
     <br />
     <br />
@@ -167,7 +168,10 @@ export default {
     });
 
     const isFinished = (elements) => {
-      // console.log("[TEST] isFinished", elements);
+      console.log("[TEST] isFinished", elements);
+    };
+    const tableChange = (state) => {
+      console.log("[TEST] tableChange", state);
     };
     const updatePage = (page) => {
       table.page = page;
@@ -201,6 +205,7 @@ export default {
       columns,
       log,
       isFinished,
+      tableChange,
       updateSorted,
       updateSize,
       updatePage,
