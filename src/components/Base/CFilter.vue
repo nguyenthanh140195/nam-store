@@ -1,5 +1,5 @@
 <template>
-  <div class="filter">
+  <div class="filter-popup">
     <label v-for="op in options" :key="op.value || op" class="filter__option">
       {{ op.label || op }}
       <input type="checkbox" :value="op.value || op" v-model="checked" />
@@ -57,7 +57,7 @@ export default {
 </script>
 
 <style scoped>
-.filter {
+.filter-popup {
   display: inline-block;
 }
 

@@ -8,29 +8,22 @@
             :key="column.key"
             :style="{ width: column.width }"
             class="c-table__head__cel"
-            :class="[
-              'text-' + column.align,
-              { sortable: column.sortable },
-              { filterable: column.filterable },
-            ]"
           >
             <div class="cel-content">
               <label>{{ column.label }}</label>
-              <span
-                v-if="column.sortable"
-                class="sort"
-                @click="clickSort(column.key)"
-              >
-                ±
-                <span :class="getSort(column.key)" />
+              <span v-if="column.sortable" class="sort">
+                <div
+                  class="ic"
+                  :class="getSort(column.key)"
+                  @click="clickSort(column.key)"
+                />
               </span>
               <span v-if="column.filterable" class="filter">
-                <span
+                <div
+                  class="ic"
                   :class="{ filtered: tableState.filtered[column.key] }"
                   @click="setShowFilterKey(column.key)"
-                >
-                  @
-                </span>
+                />
                 <span v-if="showFilterKey === column.key" class="popover">
                   <CFilter
                     :options="column.filters"
@@ -78,7 +71,6 @@
               v-for="column in columns"
               :key="column.key"
               class="c-table__row__cel"
-              :class="'text-' + column.align"
             >
               <div
                 v-if="column.render"
@@ -300,7 +292,7 @@ export default {
     };
     const getSort = (key) => {
       const { sorted } = tableState;
-      if (sorted.key !== key || sorted.value == undefined) return null;
+      if (sorted.key !== key || sorted.value == undefined) return undefined;
       return sorted.value;
     };
     const setShowFilterKey = (key) => {
@@ -383,51 +375,33 @@ $color-border: #42b983;
         }
 
         .sort {
+          width: 21px;
           cursor: pointer;
-          span {
-            &::before {
-              right: 20px;
-              bottom: 50%;
-              opacity: 0.35;
-              position: absolute;
-              margin-bottom: 1px;
-              content: "";
-              border-bottom: 6px solid $color-sort;
-              border-left: 6px solid transparent;
-              border-right: 6px solid transparent;
-            }
-
-            &::after {
-              top: 50%;
-              right: 20px;
-              opacity: 0.35;
-              position: absolute;
-              margin-top: 1px;
-              content: "";
-              border-top: 6px solid $color-sort;
-              border-left: 6px solid transparent;
-              border-right: 6px solid transparent;
-            }
+          .ic {
+            height: 21px;
+            background-color: #f00;
+          }
+          .ic.asc {
+            background-color: #0f0;
+          }
+          .ic.desc {
+            background-color: #00f;
           }
         }
         .filter {
+          width: 21px;
+          cursor: pointer;
           position: relative;
+          .ic {
+            height: 21px;
+            background-color: #f0f;
+          }
           .popover {
             z-index: 2;
             position: absolute;
             top: 100%;
             left: auto;
-            right: 0;
-          }
-        }
-      }
-      &.sortable {
-        .cel-content {
-          .sort span.asc::before {
-            opacity: 1;
-          }
-          .sort span.desc::after {
-            opacity: 1;
+            right: 100%;
           }
         }
       }
@@ -454,12 +428,12 @@ $color-border: #42b983;
     }
   }
 
-  &__foot {
-    border-top: 1px solid $color-border;
-    &__cel {
-      text-align: left;
-    }
-  }
+  // &__foot {
+  //   border-top: 1px solid $color-border;
+  //   &__cel {
+  //     text-align: left;
+  //   }
+  // }
 }
 .text-left {
   text-align: left;
